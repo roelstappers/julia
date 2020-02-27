@@ -1453,11 +1453,9 @@ static jl_value_t *jl_deserialize_datatype(jl_serializer_state *s, int pos, jl_v
     dt->layout = NULL;
     if (!dt->abstract) {
         dt->ninitialized = read_uint16(s->s);
-        dt->uid = 0;
     }
     else {
         dt->ninitialized = 0;
-        dt->uid = 0;
     }
 
     if (has_layout) {
