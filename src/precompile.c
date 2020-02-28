@@ -380,8 +380,6 @@ static void jl_compile_specializations(void)
     jl_array_t *m = jl_alloc_vec_any(0);
     JL_GC_PUSH1(&m);
     jl_foreach_reachable_mtable(precompile_enq_all_specializations_, m);
-    // TODO: Ensure stable ordering to make inference problems more reproducible (#29923)
-    //jl_sort_types((jl_value_t**)jl_array_data(m), jl_array_len(m));
     size_t i, l = jl_array_len(m);
     for (i = 0; i < l; i++) {
         jl_method_instance_t *mi = (jl_method_instance_t*)jl_array_ptr_ref(m, i);
