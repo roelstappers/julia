@@ -998,7 +998,7 @@ static jl_value_t *lookup_type_stack(jl_typestack_t *stack, jl_datatype_t *tt, s
     return NULL;
 }
 
-void jl_precompute_memoized_dt(jl_datatype_t *dt)
+void jl_precompute_memoized_dt(jl_datatype_t *dt, int cacheable)
 {
     int istuple = (dt->name == jl_tuple_typename);
     dt->hasfreetypevars = 0;
@@ -1293,7 +1293,7 @@ static jl_value_t *inst_datatype_inner(jl_datatype_t *dt, jl_svec_t *p, jl_value
     ndt->struct_decl = NULL;
     ndt->ditype = NULL;
     ndt->size = 0;
-    jl_precompute_memoized_dt(ndt);
+    jl_precompute_memoized_dt(ndt, cacheable);
     if (istuple)
         ndt->ninitialized = ntp - isvatuple;
     else if (isnamedtuple)
@@ -1771,7 +1771,7 @@ void jl_init_types(void) JL_GC_DISABLED
     // struct_decl fields are basically caches, which are mutated.
     jl_datatype_type->mutabl = 1;
     jl_datatype_type->ninitialized = 3;
-    jl_precompute_memoized_dt(jl_datatype_type);
+    jl_precompute_memoized_dt(jl_datatype_type, 1);
 
     jl_typename_type->name = jl_new_typename_in(jl_symbol("TypeName"), core);
     jl_typename_type->name->wrapper = (jl_value_t*)jl_typename_type;
@@ -1792,7 +1792,7 @@ void jl_init_types(void) JL_GC_DISABLED
     jl_typename_type->abstract = 0;
     jl_typename_type->mutabl = 1;
     jl_typename_type->ninitialized = 2;
-    jl_precompute_memoized_dt(jl_typename_type);
+    jl_precompute_memoized_dt(jl_typename_type, 1);
 
     jl_methtable_type->name = jl_new_typename_in(jl_symbol("MethodTable"), core);
     jl_methtable_type->name->wrapper = (jl_value_t*)jl_methtable_type;
@@ -1814,7 +1814,7 @@ void jl_init_types(void) JL_GC_DISABLED
     jl_methtable_type->abstract = 0;
     jl_methtable_type->mutabl = 1;
     jl_methtable_type->ninitialized = 4;
-    jl_precompute_memoized_dt(jl_methtable_type);
+    jl_precompute_memoized_dt(jl_methtable_type, 1);
 
     jl_symbol_type->name = jl_new_typename_in(jl_symbol("Symbol"), core);
     jl_symbol_type->name->wrapper = (jl_value_t*)jl_symbol_type;
@@ -1831,7 +1831,7 @@ void jl_init_types(void) JL_GC_DISABLED
     jl_symbol_type->abstract = 0;
     jl_symbol_type->mutabl = 1;
     jl_symbol_type->ninitialized = 0;
-    jl_precompute_memoized_dt(jl_symbol_type);
+    jl_precompute_memoized_dt(jl_symbol_type, 1);
 
     jl_simplevector_type->name = jl_new_typename_in(jl_symbol("SimpleVector"), core);
     jl_simplevector_type->name->wrapper = (jl_value_t*)jl_simplevector_type;
@@ -1847,7 +1847,7 @@ void jl_init_types(void) JL_GC_DISABLED
     jl_simplevector_type->abstract = 0;
     jl_simplevector_type->mutabl = 1;
     jl_simplevector_type->ninitialized = 0;
-    jl_precompute_memoized_dt(jl_simplevector_type);
+    jl_precompute_memoized_dt(jl_simplevector_type, 1);
 
     // now they can be used to create the remaining base kinds and types
     jl_nothing_type = jl_new_datatype(jl_symbol("Nothing"), core, jl_any_type, jl_emptysvec,
